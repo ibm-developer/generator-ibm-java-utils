@@ -20,7 +20,10 @@
     "generator"
   ],
   "dependencies": {
-    "yeoman-generator": "^1.0.0"
+    "yeoman-generator": "^1.0.0",
+    "generator-ibm-java": "4.1.2",
+    "ibm-java-codegen-common": "2.3.0",
+    "handlebars": "^4.0.0"
   },
   "author": "Kate Stanley",
   "license": "Apache-2.0",
