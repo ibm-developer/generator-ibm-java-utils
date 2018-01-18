@@ -45,3 +45,5 @@ projects/*
 *.DS_Store
 .idea/
 gradle*
+generated/*
+
