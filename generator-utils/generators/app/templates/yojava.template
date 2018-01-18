@@ -1,0 +1,1 @@
+yo ibm-java --createType={{createType}} --buildType={{buildType}} --groupId={{groupId}} --artifactId={{artifactId}} --bluemix={{{bluemix}}}

@@ -22,8 +22,16 @@ const configmodule = require('ibm-java-codegen-common').config
 const javagen = require('generator-ibm-java')
 const javadefaults = javagen.defaults
 const handlebars = require('handlebars')
+const process = require('process')
+const path = require('path')
+const fs = require('fs')
 
 module.exports = class extends Generator {
+
+  constructor (args, opts) {
+    super(args, opts)
+    this.option("data", { desc : 'A data file to use instead of prompts', type: String, default: undefined});
+  }
 
   initializing() {
     let defaults = new javadefaults()
@@ -34,24 +42,43 @@ module.exports = class extends Generator {
     javagen.prompts.forEach(prompt => {
       this.promptmgr.add(prompt);
     })
+    this.useDataFile = this.options.data !== undefined;
   }
 
   prompting() {
-    let qns = this.promptmgr.getQuestions()
-    return this.prompt(this.promptmgr.getQuestions()).then((answers) => {
-        this.promptmgr.afterPrompt(answers, this.data)
-    })
+    if(!this.useDataFile) {
+      //no data file supplied, so prompt the user
+      let qns = this.promptmgr.getQuestions()
+      return this.prompt(this.promptmgr.getQuestions()).then((answers) => {
+          this.promptmgr.afterPrompt(answers, this.data)
+      })
+    }
   }
 
   configuring() {
-    this.data.bluemix = JSON.stringify(this.data.bluemix)
+    if(this.useDataFile) {  //use the data from the file
+      let fullpath = path.isAbsolute(this.options.data) ? this.options.data : path.resolve(process.cwd(), this.options.data);
+      let contents = fs.readFileSync(fullpath, 'utf8');
+      this.data = JSON.parse(contents);
+    } else {                //configure based on the answers to questions
+      this.data.bluemix = JSON.stringify(this.data.bluemix)
+    }
+  }
+
+  _processTemplate(srcpath, destpath, data) {
+    let template = this.fs.read(this.templatePath(srcpath));
+    let outfile = this.destinationPath(destpath);
+    let compiledTemplate = handlebars.compile(template);
+    let output = compiledTemplate(data);
+    this.fs.write(outfile, output); 
   }
 
   writing() {
-    let template = this.fs.read(this.templatePath('generationscript.txt'));
-    let outfile = this.destinationPath('generated/generationscript.txt');
-    let compiledTemplate = handlebars.compile(template);
-    let output = compiledTemplate(this.data);
-    this.fs.write(outfile, output);
+    //write out the executable script file
+    let ext = process.platform.startsWith('win') ? '.bat' : '.sh';
+    this._processTemplate('yojava.template', 'generated/yojava' + ext, this.data);
+    //now do the data this was used to generate the script from
+    this._processTemplate('data.template', 'generated/data.json', JSON.stringify(this.data, null, '\t'));
+    fs.chmodSync(this.destinationPath('generated/yojava' + ext), 0o777);
   }
 }
