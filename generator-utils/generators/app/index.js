@@ -27,6 +27,8 @@ const process = require('process')
 const path = require('path')
 const fs = require('fs')
 
+const ext = process.platform.startsWith('win') ? '.bat' : '.sh';
+
 module.exports = class extends Generator {
 
   constructor (args, opts) {
@@ -94,7 +96,6 @@ module.exports = class extends Generator {
       this.data = JSON.parse(contents);
     } else {                //configure based on the answers to questions
       if(this.responses.bluemix) {
-        console.log(this.data)
         this.responses.bluemix.backendPlatform = this.data.createType.endsWith('/liberty') === 'liberty' ? 'JAVA' : 'SPRING'
         this.responses.bluemix = '"' + JSON.stringify(this.responses.bluemix).replace(/"/g, '\\"') + '"'
       }
@@ -103,11 +104,9 @@ module.exports = class extends Generator {
 
   writing() {
     //write out the executable script file
-    let ext = process.platform.startsWith('win') ? '.bat' : '.sh';
-    this._processTemplate('yojava.template', 'generated/yojava' + ext, this.data);
+    this._processTemplate('yojava.template', 'generated/yojava' + ext, this.responses);
     //now do the data this was used to generate the script from
-    this._processTemplate('data.template', 'generated/data.json', JSON.stringify(this.data, null, '\t'));
-    fs.chmodSync(this.destinationPath('generated/yojava' + ext), 0o777);
+    this._processTemplate('data.template', 'generated/data.json', JSON.stringify(this.responses, null, '\t'));
   }
 
   _processTemplate(srcpath, destpath, data) {
@@ -116,5 +115,9 @@ module.exports = class extends Generator {
     let compiledTemplate = handlebars.compile(template);
     let output = compiledTemplate(data);
     this.fs.write(outfile, output); 
+  }
+
+  end() {
+    fs.chmodSync(this.destinationPath('generated/yojava' + ext), 0o777);
   }
 }
