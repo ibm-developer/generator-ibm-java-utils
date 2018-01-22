@@ -1,0 +1,1 @@
+yo ibm-java{{#each .}} --{{@key}}={{{this}}}{{/each}}

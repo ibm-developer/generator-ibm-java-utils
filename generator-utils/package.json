@@ -1,0 +1,43 @@
+{
+  "name": "generator-ibm-java-utils",
+  "version": "0.0.1",
+  "description": "Yeoman generator that provides utilities for the IBM Java generator",
+  "files": [
+    "app"
+  ],
+  "scripts": {
+    "test": "nyc mocha test/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ibm-developer/generator-ibm-java-utils.git"
+  },
+  "keywords": [
+    "arf",
+    "java",
+    "codegen",
+    "yeoman",
+    "generator"
+  ],
+  "dependencies": {
+    "yeoman-generator": "^1.0.0",
+    "generator-ibm-java": "5.1.2",
+    "generator-ibm-java-spring": "2.0.1",
+    "generator-ibm-java-liberty": "8.0.1",
+    "ibm-java-codegen-common": "2.3.0",
+    "handlebars": "^4.0.0",
+    "yeoman-assert": "^2.2.2",
+    "yeoman-test": "^1.6.0",
+    "common-codegen-tests": "2.2.3"
+  },
+  "devDependencies": {
+    "mocha": "^3.5.3",
+    "nyc": "^11.3.0"
+  },
+  "author": "Kate Stanley",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/ibm-developer/generator-ibm-java-utils/issues"
+  },
+  "homepage": "https://github.com/ibm-developer/generator-ibm-java-utils#readme"
+}

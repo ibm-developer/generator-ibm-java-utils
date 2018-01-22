@@ -1,0 +1,13 @@
+{
+	"createType": "blank/spring",
+	"buildType": "gradle",
+	"appName": "testname",
+	"groupId": "testgroupid",
+	"artifactId": "testartifactid",
+	"platforms": [
+		"cli",
+		"bluemix",
+		"kube"
+	],
+	"bluemix": "\"{\\\"server\\\":{\\\"name\\\":\\\"testname\\\",\\\"host\\\":\\\"host\\\",\\\"domain\\\":\\\"mybluemix.net\\\",\\\"services\\\":[\\\"cloudant\\\"]},\\\"cloudant\\\":[{\\\"serviceInfo\\\":{\\\"name\\\":\\\"test-cloudantNoSQLDB-000\\\",\\\"label\\\":\\\"cloudantNoSQLDB\\\",\\\"plan\\\":\\\"Lite\\\"},\\\"password\\\":\\\"pass\\\",\\\"url\\\":\\\"https://account.cloudant.com\\\",\\\"username\\\":\\\"user\\\"}],\\\"backendPlatform\\\":\\\"SPRING\\\"}\""
+}
