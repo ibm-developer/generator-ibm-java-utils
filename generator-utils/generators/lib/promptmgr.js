@@ -18,7 +18,6 @@
 
 function PromptManager(config) {
   this.prompts = [];
-  this.types = {};
   this.prompt = {
     type    : 'list',
     name    : 'promptType',
@@ -38,17 +37,6 @@ PromptManager.prototype.add = function(prompt) {
   if(value) {
     this.prompt.choices.push(value);
   }
-
-  //create an index of createType by extension
-  const extqs = ext.getQuestions();
-  for(let i = 0; i < extqs.length; i++) {
-    if(extqs[i].prompt === 'createType') {
-      for(let j = 0; j < extqs[i].choices.length; j++) {
-        this.types[extqs[i].choices[j].value] = ext;
-      }
-      break;
-    }
-  }
   return ext;     //return the configured extension so that it can configured further if required
 }
 
@@ -60,18 +48,6 @@ PromptManager.prototype.getQuestions = function() {
   }
   return questions;
 }
-
-//this was run headless, so need to work out which extension provides the selected createType
-// PromptManager.prototype.setExtension = function(createType) {
-//   for (const type in this.types) {
-//     if (this.types.hasOwnProperty(type)) {
-//       if(type === createType) {
-//         // answers.promptType = this.types[type].id;
-//         break;
-//       }
-//     }
-//   }
-// }
 
 PromptManager.prototype.afterPrompt = function(answers, config) {
   for(let i = 0; i < this.prompts.length; i++) {

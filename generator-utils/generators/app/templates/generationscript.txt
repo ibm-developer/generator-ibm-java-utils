@@ -1,1 +1,1 @@
-yo ibm-java --headless --createType={{createType}} --buildType={{buildType}} --groupId={{groupId}} --artifactId={{artifactId}} --bluemix={{{bluemix}}}
+yo ibm-java{{#each .}} --{{@key}}={{{this}}}{{/each}} --headless

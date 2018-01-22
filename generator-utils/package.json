@@ -6,7 +6,7 @@
     "app"
   ],
   "scripts": {
-    "test": "nyc mocha test/unit/*"
+    "test": "nyc mocha test/*"
   },
   "repository": {
     "type": "git",
@@ -22,8 +22,16 @@
   "dependencies": {
     "yeoman-generator": "^1.0.0",
     "generator-ibm-java": "4.1.2",
+    "generator-ibm-java-spring": "1.2.0",
+    "generator-ibm-java-liberty": "7.3.1",
     "ibm-java-codegen-common": "2.3.0",
     "handlebars": "^4.0.0"
+  },
+  "devDependencies": {
+    "yeoman-assert": "^2.2.2",
+    "yeoman-test": "^1.6.0",
+    "mocha": "^3.5.3",
+    "nyc": "^11.3.0"
   },
   "author": "Kate Stanley",
   "license": "Apache-2.0",
