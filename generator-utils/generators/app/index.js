@@ -23,9 +23,16 @@ const java = require('generator-ibm-java')
 const spring = require('generator-ibm-java-spring')
 const liberty = require('generator-ibm-java-liberty')
 const handlebars = require('handlebars')
-const fs = require('fs');
+const process = require('process')
+const path = require('path')
+const fs = require('fs')
 
 module.exports = class extends Generator {
+
+  constructor (args, opts) {
+    super(args, opts)
+    this.option("data", { desc : 'A data file to use instead of prompts', type: String, default: undefined});
+  }
 
   initializing() {
     this._initializeData([new java.defaults(), new spring.defaults(), new liberty.defaults()])
@@ -61,11 +68,14 @@ module.exports = class extends Generator {
         ext.setContext(context)
       }
     })
+    this.useDataFile = this.options.data !== undefined;
   }
 
   prompting() {
-    let qns = this.promptmgr.getQuestions()
-    return this.prompt(this.promptmgr.getQuestions()).then((answers) => {
+    if(!this.useDataFile) {
+      //no data file supplied, so prompt the user
+      let qns = this.promptmgr.getQuestions()
+      return this.prompt(this.promptmgr.getQuestions()).then((answers) => {
         this.promptmgr.afterPrompt(answers, this.data)
         this.responses = {}
         for(let key in answers) {
@@ -73,27 +83,38 @@ module.exports = class extends Generator {
             this.responses[key] = this.data[key]
           }
         }
-    })
+      })
+    }
   }
 
   configuring() {
-    if(this.responses.bluemix) {
-      console.log(this.data)
-      this.responses.bluemix.backendPlatform = this.data.createType.endsWith('/liberty') === 'liberty' ? 'JAVA' : 'SPRING'
-      this.responses.bluemix = '"' + JSON.stringify(this.responses.bluemix).replace(/"/g, '\\"') + '"'
+    if(this.useDataFile) {  //use the data from the file
+      let fullpath = path.isAbsolute(this.options.data) ? this.options.data : path.resolve(process.cwd(), this.options.data);
+      let contents = fs.readFileSync(fullpath, 'utf8');
+      this.data = JSON.parse(contents);
+    } else {                //configure based on the answers to questions
+      if(this.responses.bluemix) {
+        console.log(this.data)
+        this.responses.bluemix.backendPlatform = this.data.createType.endsWith('/liberty') === 'liberty' ? 'JAVA' : 'SPRING'
+        this.responses.bluemix = '"' + JSON.stringify(this.responses.bluemix).replace(/"/g, '\\"') + '"'
+      }
     }
   }
 
   writing() {
-    let template = this.fs.read(this.templatePath('generationscript.txt'));
-    let outfile = this.destinationPath('generated/generationscript.sh');
-    let compiledTemplate = handlebars.compile(template);
-    let output = compiledTemplate(this.responses);
-    this.fs.write(outfile, output);
-    console.log(output)
+    //write out the executable script file
+    let ext = process.platform.startsWith('win') ? '.bat' : '.sh';
+    this._processTemplate('yojava.template', 'generated/yojava' + ext, this.data);
+    //now do the data this was used to generate the script from
+    this._processTemplate('data.template', 'generated/data.json', JSON.stringify(this.data, null, '\t'));
+    fs.chmodSync(this.destinationPath('generated/yojava' + ext), 0o777);
   }
 
-  end() {
-    fs.chmodSync(this.destinationPath('generated/generationscript.sh'), 0o777)
+  _processTemplate(srcpath, destpath, data) {
+    let template = this.fs.read(this.templatePath(srcpath));
+    let outfile = this.destinationPath(destpath);
+    let compiledTemplate = handlebars.compile(template);
+    let output = compiledTemplate(data);
+    this.fs.write(outfile, output); 
   }
 }
