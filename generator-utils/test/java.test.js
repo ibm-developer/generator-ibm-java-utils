@@ -28,12 +28,14 @@ const DATA_FILE = 'generated/data.json'
 class Options {
   constructor() {
     this.prompts = {}
+    this.options = {}
   }
 
   before() {
     this.prompts.promptType = 'prompt:patterns'
     return helpers.run(path.join(__dirname, '../generators/app'))
       .withPrompts(this.prompts)
+      .withOptions(this.options)
       .toPromise()
   }
 }
@@ -73,14 +75,26 @@ describe('generator-ibm-java', function() {
     })
     it(DATA_FILE + ' contents: contains bluemix object with backendPlatform escaped', function() {
       assert.fileContent(DATA_FILE, '"bluemix": "\\"{')
-      assert.fileContent(DATA_FILE, '\\\\\\"backendPlatform\\\\\\":\\\\\\"')
+      assert.fileContent(DATA_FILE, '\\\\\\"backendPlatform\\\\\\":\\\\\\"JAVA\\\\\\"')
     })
 
   })
+  let checkContents = function() {
+    it(SH_FILE + ' contents: bluemix value includes the name, cloudant and backendPlatform', function() {
+      assert.fileContent(SH_FILE,
+        '--bluemix="{\\"server\\":{\\"name\\":\\"testname\\",\\"host\\":\\"host\\",\\"domain\\":\\"mybluemix.net\\",\\"services\\":[\\"cloudant\\"]},\\"cloudant\\":[{\\"serviceInfo\\":'
+          + '{\\"name\\":\\"test-cloudantNoSQLDB-000\\",\\"label\\":\\"cloudantNoSQLDB\\",\\"plan\\":\\"Lite\\"},\\"password\\":\\\"pass\\",\\"url\\":\\"https://account.cloudant.com\\",'
+          + '\\"username\\":\\"user\\"}],\\"backendPlatform\\":\\"SPRING\\"}"')
+    })
+    it(DATA_FILE + ' contents: contains bluemix object with backendPlatform escaped', function() {
+      assert.fileContent(DATA_FILE, '"bluemix": "\\"{')
+      assert.fileContent(DATA_FILE, '\\\\\\"backendPlatform\\\\\\":\\\\\\"')
+    })
+  }
   describe('Generates a file with correct values chosen', function() {
     let prompts = {createType: 'blank/spring',
       buildType: 'gradle', appName: 'testname', groupId: 'testgroupid', artifactId: 'testartifactid',
-      services: 'cloudant', bluemix: ''}
+      services: ['cloudant']}
     const options = new Options()
     options.prompts = prompts
     before(options.before.bind(options))
@@ -91,13 +105,12 @@ describe('generator-ibm-java', function() {
         })
       }
     }
-    it(SH_FILE + ' contents: bluemix value includes the name and cloudant', function() {
-      assert.fileContent(SH_FILE,
-        '--bluemix="{\\"server\\":{\\"name\\":\\"testname\\",\\"host\\":\\"host\\",\\"domain\\":\\"mybluemix.net\\",\\"services\\":\\"cloudant\\"},\\"backendPlatform\\":\\"SPRING\\"}"')
-    })
-    it(DATA_FILE + ' contents: contains bluemix object with backendPlatform escaped', function() {
-      assert.fileContent(DATA_FILE, '"bluemix": "\\"{')
-      assert.fileContent(DATA_FILE, '\\\\\\"backendPlatform\\\\\\":\\\\\\"')
-    })
+    checkContents()
+  })
+  describe('Generates a file with correct values when data is provided', function() {
+    const options = new Options()
+    options.options.data = path.resolve('test/resources/data.json')
+    before(options.before.bind(options))
+    checkContents()
   })
 })

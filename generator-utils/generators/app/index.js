@@ -93,10 +93,10 @@ module.exports = class extends Generator {
     if(this.useDataFile) {  //use the data from the file
       let fullpath = path.isAbsolute(this.options.data) ? this.options.data : path.resolve(process.cwd(), this.options.data);
       let contents = fs.readFileSync(fullpath, 'utf8');
-      this.data = JSON.parse(contents);
+      this.responses = JSON.parse(contents);
     } else {                //configure based on the answers to questions
       if(this.responses.bluemix) {
-        this.responses.bluemix.backendPlatform = this.data.createType.endsWith('/liberty') === 'liberty' ? 'JAVA' : 'SPRING'
+        this.responses.bluemix.backendPlatform = this.responses.createType.endsWith('/liberty') ? 'JAVA' : 'SPRING'
         this.responses.bluemix = '"' + JSON.stringify(this.responses.bluemix).replace(/"/g, '\\"') + '"'
       }
     }
