@@ -1,0 +1,56 @@
+{
+  "project": {
+    "backendPlatform": "{{bluemixRaw.backendPlatform}}",
+    "name": "{{appName}}",
+    "server": {
+      "diskQuota": "512M",
+      "domain": "{{#firstAvailable bluemixRaw.server.domain 'ng.bluemix.net'}}{{/firstAvailable}}",
+      "env": {},
+      "host": "{{#firstAvailable bluemixRaw.server.host 'myhost'}}{{/firstAvailable}}",
+      "instances": 3,
+      "memory": "1024M",
+      "name": "{{#firstAvailable bluemixRaw.server.name appName}}{{/firstAvailable}}",
+      "organization": "org",
+      "space": "space"{{#if bluemixRaw.server.services}},
+      "services": [{{#each bluemixRaw.server.services}}{{#if @index}},{{/if}}
+        "{{this}}"{{/each}}
+      ]{{/if}}
+    }{{#bluemixRaw.cloudant}},
+    "cloudant": [
+      {
+        "serviceInfo": {
+          "name": "{{serviceInfo.name}}",
+          "label": "{{serviceInfo.label}}",
+          "plan": "{{serviceInfo.plan}}"
+        },
+        "password": "{{password}}",
+        "url": "{{url}}",
+        "username": "{{username}}"
+      }
+    ]{{/bluemixRaw.cloudant}}{{#bluemixRaw.objectStorage}},
+    "objectStorage": [
+      {
+        "serviceInfo": {
+          "name": "{{serviceInfo.name}}",
+          "label": "{{serviceInfo.label}}",
+          "plan": "{{serviceInfo.plan}}"
+        },
+        "project": "{{project}}",
+        "userId": "{{userId}}",
+        "password": "{{password}}",
+        "auth_url": "{{auth_url}}",
+        "domainName": "{{domainName}}"
+      }
+    ]{{/bluemixRaw.objectStorage}}
+  },
+  "generatorOptions": {
+      "generator-ibm-java": {
+        "options": {
+          "createType": "{{createType}}"
+        }
+      }
+    },
+  "templateSources": [
+    "starter-url"
+  ]
+}

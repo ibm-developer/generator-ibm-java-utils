@@ -1,0 +1,27 @@
+{
+    "project": {
+      "backendPlatform": "JAVA",
+      "name": "MyProject",
+      "server": {
+        "diskQuota": "512M",
+        "domain": "ng.bluemix.net",
+        "env": {},
+        "host": "myhost",
+        "instances": 3,
+        "memory": "1024M",
+        "name": "MyProject",
+        "organization": "org",
+        "space": "space"
+      }
+    },
+    "generatorOptions": {
+        "generator-ibm-java": {
+          "options": {
+            "createType": "microservice/liberty"
+          }
+        }
+      },
+    "templateSources": [
+      "starter-url"
+    ]
+}
