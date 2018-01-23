@@ -24,6 +24,9 @@ const fs = require('fs')
 
 const SH_FILE = 'generated/yojava.sh'
 const DATA_FILE = 'generated/data.json'
+const SCAFF_FILE = 'generated/scaffolder.json'
+const SCAFF_DEFAULT_CONTENTS = require(path.resolve('test/resources/scaffolder-default.json'))
+const SCAFF_CONTENTS = require(path.resolve('test/resources/scaffolder.json'))
 
 class Options {
   constructor() {
@@ -77,6 +80,9 @@ describe('generator-ibm-java', function() {
       assert.fileContent(DATA_FILE, '"bluemix": "\\"{')
       assert.fileContent(DATA_FILE, '\\\\\\"backendPlatform\\\\\\":\\\\\\"JAVA\\\\\\"')
     })
+    it(SCAFF_FILE + ' content: contains correct data', function() {
+      assert.jsonFileContent(SCAFF_FILE, SCAFF_DEFAULT_CONTENTS)
+    })
 
   })
   let checkContents = function() {
@@ -106,6 +112,9 @@ describe('generator-ibm-java', function() {
       }
     }
     checkContents()
+    it(SCAFF_FILE + ' content: contains correct data', function() {
+      assert.jsonFileContent(SCAFF_FILE, SCAFF_CONTENTS)
+    })
   })
   describe('Generates a file with correct values when data is provided', function() {
     const options = new Options()

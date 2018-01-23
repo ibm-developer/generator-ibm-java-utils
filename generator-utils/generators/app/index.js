@@ -22,7 +22,7 @@ const common = require('ibm-java-codegen-common')
 const java = require('generator-ibm-java')
 const spring = require('generator-ibm-java-spring')
 const liberty = require('generator-ibm-java-liberty')
-const handlebars = require('handlebars')
+const handlebars = common.handlebars
 const process = require('process')
 const path = require('path')
 const fs = require('fs')
@@ -97,6 +97,7 @@ module.exports = class extends Generator {
     } else {                //configure based on the answers to questions
       if(this.responses.bluemix) {
         this.responses.bluemix.backendPlatform = this.responses.createType.endsWith('/liberty') ? 'JAVA' : 'SPRING'
+        this.responses.bluemixRaw = this.responses.bluemix
         this.responses.bluemix = '"' + JSON.stringify(this.responses.bluemix).replace(/"/g, '\\"') + '"'
       }
     }
@@ -107,6 +108,7 @@ module.exports = class extends Generator {
     this._processTemplate('yojava.template', 'generated/yojava' + ext, this.responses);
     //now do the data this was used to generate the script from
     this._processTemplate('data.template', 'generated/data.json', JSON.stringify(this.responses, null, '\t'));
+    this._processTemplate('scaffolder.template', 'generated/scaffolder.json', this.responses)
   }
 
   _processTemplate(srcpath, destpath, data) {

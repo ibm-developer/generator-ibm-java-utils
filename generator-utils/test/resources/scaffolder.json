@@ -1,0 +1,42 @@
+{
+    "project": {
+      "backendPlatform": "SPRING",
+      "name": "testname",
+      "server": {
+        "diskQuota": "512M",
+        "domain": "mybluemix.net",
+        "env": {},
+        "host": "host",
+        "instances": 3,
+        "memory": "1024M",
+        "name": "testname",
+        "organization": "org",
+        "space": "space",
+        "services": [
+          "cloudant"
+        ]
+      },
+      "cloudant": [
+        {
+          "serviceInfo": {
+            "name": "test-cloudantNoSQLDB-000",
+            "label": "cloudantNoSQLDB",
+            "plan": "Lite"
+          },
+          "password": "pass",
+          "url": "https://account.cloudant.com",
+          "username": "user"
+        }
+      ]
+    },
+    "generatorOptions": {
+        "generator-ibm-java": {
+          "options": {
+            "createType": "blank/spring"
+          }
+        }
+      },
+    "templateSources": [
+      "starter-url"
+    ]
+}
