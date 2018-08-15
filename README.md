@@ -13,7 +13,7 @@ To install the generator:
 1. `git clone git@github.com:ibm-developer/generator-ibm-java-utils.git`
 1. `cd generator-utils`
 1. `npm install`
-1. `npm link`
+1. `npm link` 
 
 ## Running the generator
 
@@ -51,7 +51,7 @@ The generator can be run using a JSON object such as:
 Create a file called `data.json` with the above contents and run:
 
 ```
-yo ibm-java-utils --data data.json
+yo ibm-java-utils --data data.json 
 ```
 
 The generator will create a file called `generated/yojava.sh` to run the Java generator.
